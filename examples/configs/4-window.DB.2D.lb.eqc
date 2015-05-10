@@ -1,0 +1,100 @@
+#Equalizer 1.1 ascii
+
+# single pipe, multi-level DB / 2D load-balanced configuration. 
+
+global
+{
+    EQ_WINDOW_IATTR_PLANES_STENCIL 1
+    EQ_WINDOW_IATTR_HINT_SWAPSYNC  0
+}
+
+server
+{
+    connection { hostname "127.0.0.1" }
+    config
+    {
+        appNode
+        {
+            pipe
+            {
+                window
+                {
+                    viewport [ 50 380 300 300 ]
+                    name "First Half 1"
+
+                    channel { name "channel-first-1" }
+                }
+                window
+                {
+                    viewport [ 360 380 300 300 ]
+                    name "Second Half 1"
+
+                    channel { name "channel-second-1" }
+                }
+                window
+                {
+                    viewport [ 670 380 300 300 ]
+                    name "Second Half 2"
+
+                    channel { name "channel-second-2" }
+                }
+
+                window
+                {
+                    viewport [ 360 50 300 300 ]
+                    name "Result"
+                    attributes { hint_swapsync 1 }
+                    channel { name "channel-all" }
+                }
+            }
+        }
+        observer{}
+        layout{ view { observer 0 }}
+        canvas
+        {
+            layout 0
+            wall{}
+            segment { channel "channel-all" }
+        }
+        compound
+        {
+            channel  ( segment 0 view 0 )
+            task    [ CLEAR ASSEMBLE ] 
+            buffer  [ COLOR DEPTH ]
+
+            compound
+            {
+                range   [ 0 .5 ]
+                load_equalizer { mode 2D }
+
+                compound
+                {
+                    channel  "channel-first-1"
+                    outputframe {}
+                }
+                compound{}
+
+            }
+            compound
+            {
+                range   [ .5 1 ]
+                load_equalizer { mode 2D }
+
+                compound
+                {
+                    channel  "channel-second-1"
+                    outputframe {}
+                }
+                compound
+                {
+                    channel  "channel-second-2"
+                    outputframe {}
+                }
+            }
+
+            inputframe{ name "frame.channel-first-1" }
+            inputframe{ name "frame.channel-second-1" }
+            inputframe{ name "frame.channel-second-2" }
+        }
+    }    
+}

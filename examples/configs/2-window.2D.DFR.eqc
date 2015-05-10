@@ -1,0 +1,56 @@
+#Equalizer 1.1 ascii
+# 2-window sort-first, constant-framerate config running on a single GPU
+
+server
+{
+    connection { hostname "127.0.0.1" }
+    config
+    {
+        appNode
+        {
+            pipe
+            {
+                window
+                {
+                    attributes { hint_drawable pbuffer }
+                    channel { name "source1" }
+                    channel { name "source2" }
+                }
+                window
+                {
+                    viewport [ .25 .25 .5 .5 ]
+                    name "2D and Dynamic Frame Resize"
+
+                    channel { name "channel" }
+                }
+            }
+        }
+        observer{}
+        layout{ view { observer 0 }}
+        canvas
+        {
+            layout 0
+            wall{}
+            segment { channel "channel" }
+        }
+        compound
+        { 
+            channel  ( segment 0 view 0 )
+            
+            compound 
+            {
+                channel "source2"
+
+                load_equalizer {}
+                compound {}
+                compound { channel "source1" outputframe{} }
+                inputframe { name "frame.source1" }
+
+                DFR_equalizer { framerate 15 }
+                outputframe{ }
+            }
+
+            inputframe{ name "frame.source2" }
+        }
+    }    
+}

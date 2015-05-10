@@ -1,0 +1,78 @@
+#Equalizer 1.1 ascii
+
+# Configuration to create youtube stereo video:
+#  Capture the border-less window OR
+#  Enable the outputframe and set EQ_DUMP_IMAGES to 255 to dump rgb images
+#  Use the other window to drive the application
+#  Tag videos with yt3d:enable=true
+
+server
+{
+    connection { hostname "127.0.0.1" }
+    config
+    {
+        appNode
+        {
+            pipe
+            {
+                device 1
+                window
+                {
+                    viewport [ 25 25 1280 720 ]
+#                    viewport [ 25 25 640 360 ]
+                    attributes { hint_decoration OFF }
+                    channel { viewport [  0 0 .5 1 ] name "left" }
+                    channel { viewport [ .5 0 .5 1 ] name "right" }
+                    channel { name "dump" }
+                }
+                window
+                {
+                    name "Control"
+                    viewport [ 25 800 640 360 ]
+                    
+                    channel { name "channel" }
+                }
+            }
+        }
+        observer{}
+        layout{ view { mode STEREO observer 0 }}
+        canvas
+        {
+            layout 0
+            wall
+            {
+                bottom_left  [ -1.92 -1.08 -2 ]
+                bottom_right [  1.92 -1.08 -2 ]
+                top_left     [ -1.92  1.08 -2 ]
+            }
+            segment { channel "channel" }
+            segment { channel "left" }
+            segment { channel "right" }
+            segment { channel "dump" }
+        }
+        compound
+        { 
+            compound
+            {
+                channel  ( segment 0 view 0 )
+                attributes { stereo_mode ANAGLYPH }
+            }
+            compound
+            {
+                channel  ( segment 1 view 0 )
+                eye [ LEFT CYCLOP ]
+            }
+            compound
+            {
+                channel  ( segment 2 view 0 )
+                eye [ RIGHT CYCLOP ]
+            }
+#            compound
+#            {
+#                channel  ( segment 3 view 0 )
+#                task [ READBACK ]
+#                outputframe {}
+#            }
+        }
+    }    
+}

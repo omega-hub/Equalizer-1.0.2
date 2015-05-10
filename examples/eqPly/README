@@ -1,0 +1,160 @@
+
+                          Parallel Polygonal Renderer
+
+Overview
+
+   The eqPly example is the reference implementation of an Equalizer
+   application. It does render polygonal data, read from a ply file. It
+   supports all Equalizer compound features, namely 2D (sort-first), DB
+   (sort-last) and Eye (stereo) decompositions. In DB mode, each contributor
+   renders it's part of a model in a different color to illustrate the
+   database decomposition.
+
+   The Programming Guide covers the application structure of eqPly
+   extensively.
+
+Application Structure
+
+   As with any Equalizer application, eqPly consists of the main application
+   and the rendering clients. In this simple example, they are both contained
+   in the same executable. The executable can also be run as a resident
+   render client, which is used to pre-launch rendering clients manually.
+
+  Application Main Loop
+
+   The main application is driving the rendering, that is, it controls the
+   execution flow by receiving events from the render nodes, acting on these
+   events and by issuing the rendering of new frames. It does not execute any
+   rendering code.
+
+  Render Nodes
+
+   The main function executes first eq::init(), which will not return when
+   the program is launched by the server as a render client. The Equalizer
+   library connects the render client to the server, and receives commands
+   from this server. The individual rendering entities --nodes, pipes,
+   windows, channels-- are created using the NodeFactory. On these entities,
+   various functions, e.g. init, update and exit, are called based on the
+   commands received from the server. These callback functions typically
+   receive an identifier defined by the application to provide contextual
+   information. For example, the node's init method receives the identifier
+   of the InitData object, as defined by the application. It instantiates the
+   object and loads the polygonal model named by the InitData. A seperate
+   document describes all task methods.
+
+  Event Processing
+
+   Equalizer collects events for all windows asynchronously and sends them to
+   the application thread, where they are processed at the end of the frame
+   by Config::handleEvent. This example implements a trackball, move and zoom
+   mouse interaction, as well as some keystroke commands. A separate document
+   describes the event handling.
+
+Usage
+
+   ./build/Darwin/bin/eqPly.app/Contents/MacOS/eqPly  [-o] [-a <string>]
+                                        [-l <string>] [-i] [-g] [-c
+                                        <string>] [-w <string>] [-n
+                                        <unsigned>] [-r] [-b] [-p <string>]
+                                        [-m <string>] ...  [--] [--version]
+                                        [-h]
+
+
+Where: 
+
+   -o,  --noOverlay
+     Disable overlay logo
+
+   -a <string>,  --cameraPath <string>
+     File containing camera path animation
+
+   -l <string>,  --log <string>
+     output log file
+
+   -i,  --invertFaces
+     Invert faces (valid during binary file creation)
+
+   -g,  --glsl
+     Enable GLSL shaders
+
+   -c <string>,  --renderMode <string>
+     Rendering Mode (immediate, displayList, VBO)
+
+   -w <string>,  --windowSystem <string>
+     Window System API ( one of: AGL glX )
+
+   -n <unsigned>,  --numFrames <unsigned>
+     Maximum number of rendered frames
+
+   -r,  --resident
+     Keep client resident (see resident node documentation on website)
+
+   -b,  --blackAndWhite
+     Don't use colors from ply file
+
+   -p <string>,  --port <string>
+     tracking device port
+
+   -m <string>,  --model <string>  (accepted multiple times)
+     ply model file name
+
+   --,  --ignore_rest
+     Ignores the rest of the labeled arguments following this flag.
+
+   --version
+     Displays version information and exits.
+
+   -h,  --help
+     Displays usage information and exits.
+
+
+   eqPly - Equalizer polygonal rendering example
+
+    Run-time commands:
+
+        Left Mouse Button:         Rotate model
+
+        Middle Mouse Button:       Move model in X, Y
+
+        Right Mouse Button:        Move model in Z
+
+        <Cursor Keys>:             Move head in X,Y plane
+
+        <Page Up,Down>:            Move head in Z
+
+        <Esc>, All Mouse Buttons:  Exit program
+
+        <Space>:                   Reset camera
+
+        i:                         Reset camera for Immersive Setups
+
+        o:                         Toggle perspective/orthographic
+
+        s:                         Toggle statistics overlay
+
+        F1, h:                     Toggle help overlay
+
+        w:                         Toggle wireframe mode
+
+        r:                         Switch rendering mode
+
+        v:                         Switch active view
+
+        m:                         Switch model for active view
+
+    If option -t is specified, eqPly will try to use provided file as a set of
+    reference camera positions for rendering. Format of this file is following:
+
+    - first line should contain 3 values which are initial rotation of a model
+
+    - every next line should contain 7 values which are:
+      1    : integer - number of frames to reach that state from previous one
+      2,3,4: float   - position of camera
+      5,6,7: float   - rotation of camera
+
+    Position and rotation of camera are interpolated between states. Number of
+    frames should start from 0 and be positive. If you want to have your path to
+    be a loop, then last position and rotation should be the same as first ones
+    (there is no interpolation between last and first positions). All angles are
+    specified in degrees. Check "examples/eqPly/pathExample.txt" for an example.
+

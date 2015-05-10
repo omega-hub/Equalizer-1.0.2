@@ -1,0 +1,56 @@
+#Equalizer 1.1 ascii
+# single pipe, two-to-one sort-last demo configuration
+
+server
+{
+    connection { hostname "127.0.0.1" }
+    config
+    {
+        appNode
+        {
+            pipe
+            {
+                window
+                {
+                    viewport [ .05 .3 .4 .4 ]
+                    channel
+                    {
+                        name "channel2"
+                    }
+                }
+                window
+                {
+                    viewport [ .55 .3 .4 .4 ]
+                    attributes{ planes_stencil ON }
+
+                    channel
+                    {
+                        name "channel1"
+                    }
+                }
+            }
+        }
+        observer{}
+        layout{ view { observer 0 }}
+        canvas
+        {
+            layout 0
+            wall{}
+            segment { channel "channel1" }
+        }
+        compound
+        {
+            channel  ( segment 0 view 0 )
+            buffer  [ COLOR DEPTH ]
+            
+            compound{ range   [ 0 .5 ] }
+            compound
+            { 
+                channel "channel2"
+                range   [ .5 1 ]
+                outputframe { name "frame.channel2" type texture }
+            }
+            inputframe { name "frame.channel2" }
+        }
+    }    
+}

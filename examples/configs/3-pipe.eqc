@@ -1,0 +1,103 @@
+#Equalizer 1.1 ascii
+
+# Simulating a three pipe system on a single pipe. Projections are set up for a
+# 1.5m high wall, 4x3 aspect ratio and 10% overlap. Add pipe device numbers and
+# use fullscreen windows to get a production setup.
+
+server
+{
+    connection{ hostname "127.0.0.1" }
+    config
+    {
+        appNode
+        {
+            pipe
+            {
+                window
+                {
+                    viewport [ 10 200 400 300 ]
+                    channel
+                    {
+                        name "channel-left"
+                    }
+                }
+            }
+            pipe
+            {
+                window
+                {
+                    viewport [ 420 200 400 300 ]
+                    channel
+                    {
+                        name "channel-middle"
+                    }
+                }
+            }
+            pipe
+            {
+                window
+                {
+                    viewport [ 830 200 400 300 ]
+                    channel
+                    {
+                        name "channel-right"
+                    }
+                }
+            }
+        }
+        observer{}
+        layout{ view { observer 0 }}
+        canvas
+        {
+            layout 0
+            segment 
+            { 
+                wall
+                {
+                    bottom_left  [ -2.8 -1.5 -2 ]
+                    bottom_right [  -.8 -1.5 -2 ]
+                    top_left     [ -2.8  1.5 -2 ]
+                }
+                channel "channel-left" 
+            }
+            segment 
+            { 
+                wall
+                {
+                    bottom_left  [ -1 -1.5 -2 ]
+                    bottom_right [  1 -1.5 -2 ]
+                    top_left     [ -1  1.5 -2 ]
+                }
+                channel "channel-middle" 
+            }
+            segment 
+            { 
+                wall
+                {
+                    bottom_left  [  .8 -1.5 -2 ]
+                    bottom_right [ 2.8 -1.5 -2 ]
+                    top_left     [  .8  1.5 -2 ]
+                } 
+                channel "channel-right" 
+            }
+        }
+        compound
+        { 
+            compound
+            { 
+                channel  ( segment 0 view 0 )
+                swapbarrier {}
+            }
+            compound
+            { 
+                channel  ( segment 1 view 0 )
+                swapbarrier {}
+            }
+            compound
+            { 
+                channel  ( segment 2 view 0 )
+                swapbarrier {}
+            }
+        }
+    }    
+}

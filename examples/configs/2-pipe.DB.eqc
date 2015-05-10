@@ -1,0 +1,56 @@
+#Equalizer 1.1 ascii
+# two-pipe sort-last config for dual-GPU machines
+
+server
+{
+    connection { hostname "127.0.0.1" }
+    config
+    {
+        appNode
+        {
+            pipe 
+            {
+                device 0
+                window
+                {
+                    viewport [ .25 .25 .5 .5 ]
+                    attributes { planes_stencil ON }
+                    channel { name "channel1" }
+                }
+            }
+            pipe 
+            {
+                device 1
+                window
+                {
+                    attributes { hint_fullscreen ON }
+                    channel { name "channel2" }
+                }
+            }
+        }
+
+        observer{}
+        layout{ view { observer 0 }}
+        canvas
+        {
+            layout 0
+            wall{}
+            segment { channel "channel1" }
+        }
+
+        compound
+        {
+            channel  ( canvas 0 segment 0 layout 0 view 0 )
+            buffer [ COLOR DEPTH ]
+
+            compound{ range [ 0 .5 ] }
+            compound
+            {
+                channel "channel2"
+                range [ .5 1 ]
+                outputframe {}
+            }
+            inputframe { name "frame.channel2" }
+        }
+    }    
+}

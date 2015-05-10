@@ -1,0 +1,55 @@
+#Equalizer 1.1 ascii
+# 1-window dynamic frame resolution (fixed-framerate) config
+
+server
+{
+    connection{ hostname "127.0.0.1"}
+    config
+    {
+        appNode
+        {
+            pipe
+            {
+                window
+                {
+                    name "Dynamic Frame Resize"
+                    viewport [ 20 100 480 300 ]
+
+                    channel
+                    {
+                        name "buffer"
+                        viewport [ 0 0 2048 2048 ]
+                        drawable [ FBO_COLOR FBO_DEPTH ]
+                    }
+                    channel
+                    {
+                        name "channel"
+                    }
+                }
+            }
+        }
+        observer{}
+        layout{ view { observer 0 }}
+        canvas
+        {
+            layout 0
+            wall{}
+            segment { channel "channel" }
+        }
+        compound
+        { 
+            channel( segment 0 view 0 )
+            compound
+            { 
+                channel "buffer"
+                DFR_equalizer
+                { 
+                     framerate 15.0
+                     damping 0.5
+                }
+                outputframe { type texture }
+            }
+            inputframe { name "frame.buffer" }
+        }
+    }    
+}

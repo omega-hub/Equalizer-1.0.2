@@ -1,0 +1,52 @@
+#Equalizer 1.1 ascii
+
+# 'Hello, World!' config: one window rendering from the application process.
+server
+{
+    connection { hostname "127.0.0.1" }
+    config
+    {
+        appNode
+        {
+            pipe
+            {
+                window
+                {
+                    #attributes { hint_drawable pbuffer hint_doublebuffer 0 }
+                    #viewport [ 0 0 4096 4096 ] 
+                    channel
+                    {
+                        #drawable [ FBO_COLOR FBO_DEPTH ]
+                        name "buffer"
+                    }                    
+                }
+                window
+                {
+                    viewport [ 600 50 250 250 ]
+                    channel { name "channel" }
+                }
+            }
+        }
+        observer{}
+        layout{ view { observer 0 }}
+        canvas
+        {
+            layout 0
+            wall{}
+            segment { channel "channel" }
+        }
+        compound
+        {
+            channel  ( segment 0 view 0 )
+            
+            compound 
+            {
+                channel "buffer"
+                zoom [ 2 2 ]
+                outputframe{ }
+            }
+
+            inputframe{ name "frame.buffer" }
+        }
+    }    
+}

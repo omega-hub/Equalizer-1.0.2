@@ -1,0 +1,57 @@
+#Equalizer 1.1 ascii
+# two pipe fullscreen config for passive stereo output
+
+global
+{
+    EQ_WINDOW_IATTR_HINT_FULLSCREEN ON
+}
+
+server
+{
+    connection { hostname "127.0.0.1" }
+    config
+    {
+        appNode
+        {
+            pipe
+            {
+                device 0
+                window
+                {
+                    channel { name "channel-left" }
+                }
+            }
+            pipe
+            {
+                device 1
+                window
+                {
+                    channel { name "channel-right" }
+                }
+            }
+        }
+        observer{}
+        layout{ view { mode STEREO observer 0 }}
+        canvas
+        {
+            layout 0
+            wall {}
+            segment { eye [ LEFT CYCLOP ] channel "channel-left" }
+            segment { eye [ RIGHT CYCLOP ] channel "channel-right" }
+        }
+        
+        compound 
+        {
+            compound
+            {
+                channel  ( canvas 0 segment 0 layout 0 view 0 )
+                swapbarrier{}
+            }
+            compound
+            {
+                channel  ( canvas 0 segment 1 layout 0 view 0 )
+                swapbarrier{}
+            }
+        }
+    }    
+}

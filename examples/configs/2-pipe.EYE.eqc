@@ -1,0 +1,56 @@
+#Equalizer 1.1 ascii
+# two pipe configuration for active stereo decomposition
+
+server
+{
+    connection { hostname "127.0.0.1" }
+    config
+    {
+        appNode
+        {
+            pipe
+            {
+                device 0
+                window
+                {
+                    viewport [ .25 .25 .5 .5 ]
+                    channel { name "channel" }
+                }
+            }
+            pipe
+            {
+                device 1
+                window
+                {
+                    channel { name "channel-right" }
+                }
+            }
+        }
+        observer{}
+        layout{ view { mode STEREO observer 0 }}
+        canvas
+        {
+            layout 0
+            wall{}
+            segment { channel "channel" }
+        }
+        compound 
+        {
+            channel  ( canvas 0 segment 0 layout 0 view 0 )
+            
+            compound{ eye [ LEFT CYCLOP ] }
+            compound
+            {
+                channel "channel-right"
+                eye [ RIGHT ]
+                outputframe {}
+            }
+            compound
+            {
+                task [ ASSEMBLE ]
+                eye [ RIGHT ]
+                inputframe { name "frame.channel-right" }
+            }
+        }
+    }    
+}

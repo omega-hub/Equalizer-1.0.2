@@ -1,0 +1,108 @@
+#Equalizer 1.1 ascii
+
+# Passive stereo powerwall
+#   In stereo mode each GPU renders its own eye pass
+#   In mono mode, each GPU renders a part of the image and the left eye GPU
+#   displays the result
+
+server
+{
+    config
+    {
+        appNode
+        {
+            pipe
+            {
+                device 0
+                window
+                {
+                    viewport [ .25 .25 .5 .5 ]
+                    attributes{ hint_drawable window }
+                    channel 
+                    {
+                        name "channel-left" 
+                    }
+                }
+            }
+            pipe
+            {
+                device 1
+                window
+                {
+                    attributes{ hint_drawable pbuffer }
+                    channel 
+                    {
+                        name "right-PBuffer" 
+                    }
+                }
+                window
+                {
+                    viewport [ 0.25 .25 .5 .5 ]
+                    channel 
+                    {
+                        name "channel-right" 
+                    }
+                }
+            }
+        }
+        
+        observer{}
+        layout 
+        { 
+            name "Simple"
+            view { mode STEREO observer 0 }
+        }  
+        canvas 
+        { 
+            layout "Simple"
+            wall {}
+
+            segment
+            {
+                eye [ LEFT CYCLOP ] 
+                channel "channel-left" 
+            }
+            segment 
+            {
+                eye [ RIGHT ] 
+                channel "channel-right" 
+            }
+        }
+
+        compound 
+        { 
+           name "2D" 
+           channel ( view 0 segment 0 ) 
+           eye [ CYCLOP ] 
+           load_equalizer{} 
+
+           compound {} 
+           compound 
+           {
+               channel "right-PBuffer" 
+               outputframe{} 
+           } 
+           inputframe{ name "frame.right-PBuffer" } 
+        } 
+
+        compound 
+        {
+            name "Stereo"
+
+            compound
+            {
+                name "Stereo-Left" 
+                channel ( view 0 segment 0 ) 
+                eye [ LEFT ]
+                swapbarrier{}
+            }
+            compound
+            {
+                name "Stereo-Right" 
+                channel ( view 0 segment 1 ) 
+                eye [ RIGHT ]
+                swapbarrier{}
+            }
+        }
+    }    
+}
