@@ -36,6 +36,10 @@
 #  define chdir _chdir
 #endif
 
+#ifndef _WIN32
+    #include <dlfcn.h>
+#endif
+
 namespace eq
 {
 /** @cond IGNORE */
@@ -105,7 +109,17 @@ co::ConnectionPtr _startLocalServer()
     Strings dirNames;
     dirNames.push_back( "" );
     dirNames.push_back( "./" );
-
+// Add path of current .so so search paths for EqualizerServer    
+#ifndef _WIN32
+    Dl_info dl_info;
+    dladdr((void *)_startLocalServer, &dl_info);
+    
+    char libPath[1024];
+    strncpy(libPath, dl_info.dli_fname, 1024);
+    char* k = strrchr(libPath, '/');
+    *(k + 1) = '\0';
+    dirNames.push_back( libPath );
+#endif
 #ifdef EQ_BUILD_DIR
 #ifdef NDEBUG
     dirNames.push_back( std::string( EQ_BUILD_DIR ) + "libs/server/Release/" );
