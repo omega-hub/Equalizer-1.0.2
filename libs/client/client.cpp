@@ -103,6 +103,7 @@ namespace
 co::ConnectionPtr _startLocalServer()
 {
     Strings dirNames;
+    dirNames.push_back( "" );
     dirNames.push_back( "./" );
 
 #ifdef EQ_BUILD_DIR
