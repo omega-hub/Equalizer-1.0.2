@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 2.6.4 FATAL_ERROR)
 project(Equalizer)
 
-option(EQUALIZER_PREFER_AGL "Prefer AGL over GLX on Mac OS X" ON)
+option(EQUALIZER_PREFER_AGL "Prefer AGL over GLX on Mac OS X" OFF)
 option(EQUALIZER_FORCE_OPENMP "Force usage of buggy OpenMP implementation" OFF)
 option(EQUALIZER_USE_BOOST "Test for Boost support" ON)
 option(EQUALIZER_USE_CUDA "Test for CUDA support" ON)
